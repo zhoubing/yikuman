@@ -17,3 +17,4 @@ class YikumanItem(scrapy.Item):
     cover = scrapy.Field()
     url = scrapy.Field()
     index = scrapy.Field()
+    detail = scrapy.Field()

@@ -35,5 +35,44 @@ class YikumanList(scrapy.Spider):
             item['cover'] = img.extract_first()
             item['url'] = href.extract_first()
             item['index'] = item['url'].split("/")[-1].split(".")[0]
-            yield item
-        pass
+            yield scrapy.Request(item['url'], callback=self.parse_detail, meta={"item": item})
+            # yield item
+
+    def parse_detail(self, response):
+        item = response.meta['item']
+        # print(response.xpath("//div[@id='post_content']/p/br")[0].xpath("following::text()")[0])
+        details = response.xpath("//div[@id='post_content']/p//text()")
+        detail_name = self.get_text(details, "名称")
+        detail_format = self.get_text(details, "格式")
+        detail_size = self.get_text(details, "大小")
+        detail_time = self.get_text(details, "时间")
+        detail_prescription = self.get_text(details, "说明")
+
+        print(detail_name)
+        print(detail_format)
+        print(detail_size)
+        print(detail_time)
+        print(detail_prescription)
+
+        detail_img = response.xpath("//div[@id='post_content']/p//img/@src")
+        imgs = []
+        for img in detail_img:
+            imgs.append(img.extract())
+
+        item['detail'] = {
+            "name": detail_name,
+            "format": detail_format,
+            "size": detail_size,
+            "time": detail_time,
+            "prescription": detail_prescription,
+            "imgs": imgs
+        }
+        print(item)
+        yield item
+
+    @staticmethod
+    def get_text(li, value):
+        for item in li:
+            if value in item.extract():
+                return item.extract()
+        return ""

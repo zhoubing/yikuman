@@ -8,6 +8,7 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+import os
 
 BOT_NAME = 'yikuman'
 
@@ -64,10 +65,9 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    # 'yikuman.pipelines.YikumanPipeline': 300,
-    'yikuman.mongo_list_pipelines.YikumanMongoListPipeline': 4,
-    # 'yikuman.spiders.yikuman_image_pipeline.YikumanImagePipeline': 5,
-    'yikuman.cover_pipelines.YikumanCoverPipeline': 6
+    'yikuman.pipelines.YikumanMongoListPipeline': 4,
+
+    'yikuman.pipelines.YikumanImagePipeline': 6,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -92,3 +92,4 @@ ITEM_PIPELINES = {
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 IMAGES_STORE = './images'
+# IMAGES_STORE = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'images')
