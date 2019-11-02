@@ -8,5 +8,5 @@
 
 class YikumanPipeline(object):
     def process_item(self, item, spider):
-        print("pipline " + item['name'])
+        print("YikumanPipeline: " + item['title'])
         return item

@@ -65,7 +65,8 @@ ROBOTSTXT_OBEY = True
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     # 'yikuman.pipelines.YikumanPipeline': 300,
-    'yikuman.pipelines.YikumanPipeline': 5,
+    'yikuman.mongo_list_pipelines.YikumanMongoListPipeline': 4,
+    # 'yikuman.spiders.yikuman_image_pipeline.YikumanImagePipeline': 5,
     'yikuman.cover_pipelines.YikumanCoverPipeline': 6
 }
 

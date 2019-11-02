@@ -10,9 +10,10 @@ import scrapy
 
 class YikumanItem(scrapy.Item):
     # define the fields for your item here like:
-    name = scrapy.Field()
+    title = scrapy.Field()
     date = scrapy.Field()
     comment = scrapy.Field()
     category = scrapy.Field()
     cover = scrapy.Field()
     url = scrapy.Field()
+    index = scrapy.Field()
