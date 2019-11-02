@@ -1,4 +1,5 @@
 import scrapy
+from scrapy import Request
 
 from yikuman.items import YikumanItem
 
@@ -6,11 +7,14 @@ from yikuman.items import YikumanItem
 class YikumanList(scrapy.Spider):
     name = 'yikumanlist'
     allowed_domains = ['yikuman.com']
-    start_urls = ['https://yikuman.com/category/page/1']
+    # start_urls = ['https://yikuman.com/category/page/1']
 
-    # def start_requests(self):
+    def start_requests(self):
+        for index in range(1, 97):
+            yield Request('https://yikuman.com/category/guochan/page/' + str(index), callback=self.parse)
 
     def parse(self, response):
+        print("parse")
         posts = response.xpath("//li[@class='post box row ']")
         for index, post in enumerate(posts):
             img = post.xpath("div[@class='thumbnail']/a/img/@src")

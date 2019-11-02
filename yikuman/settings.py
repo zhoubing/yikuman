@@ -8,6 +8,7 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+import datetime
 import os
 
 BOT_NAME = 'yikuman'
@@ -93,3 +94,9 @@ ITEM_PIPELINES = {
 
 IMAGES_STORE = './images'
 # IMAGES_STORE = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'images')
+
+
+LOG_LEVEL = 'WARNING'
+
+time = datetime.datetime.now()
+LOG_FILE = "log/{}_{}_{}.log".format(time.year, time.month, time.day)

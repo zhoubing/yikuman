@@ -69,7 +69,6 @@ class YikumanImagePipeline(ImagesPipeline):
                                         headers={'Content-Type': 'image/jpeg'})
         return checksum
 
-
     def item_completed(self, results, item, info):
         return item
 
@@ -85,6 +84,6 @@ class YikumanMongoListPipeline(object):
 
     def process_item(self, item, spider):
         print("YikumanMongoListPipeline")
-        # m = self.collection.update({'url': item['url']}, dict(item), upsert=True)
-        # print(m)
+        m = self.collection.update({'url': item['url']}, dict(item), upsert=True)
+        print(m)
         return item
