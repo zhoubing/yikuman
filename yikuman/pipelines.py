@@ -13,19 +13,45 @@ from scrapy.pipelines.images import ImagesPipeline
 import pymongo
 from scrapy.utils.misc import md5sum
 
+from yikuman import settings
+
 
 class YikumanImagePipeline(ImagesPipeline):
     def get_media_requests(self, item, info):
         cover = item['cover']
-        yield Request(cover, meta={'item': item})
+
+        path = None
+        if item and item['date'] and item['index']:
+            # 这个参数的request就是上面的yield Request.通过meta传递自定义参数
+            path = item['date'] + "/" + item['index'] + "/" + cover.split('/')[-1]
+        else:
+            path = cover.split('/')[-1]
+
+        if path and os.path.exists(settings.IMAGES_STORE + "/" + path):
+            print(settings.IMAGES_STORE + "/" + path + " extits")
+        else:
+            print(settings.IMAGES_STORE + "/" + path + " not extits")
+            # 挂本地代理
+            yield Request(cover, meta={'item': item, 'proxy': 'http://127.0.0.1:1087'}, dont_filter=True)
 
         imgs = item['detail']['imgs']
         for img in imgs:
-            yield Request(img, meta={'item': item})
+            path = None
+            if item and item['date'] and item['index']:
+                # 这个参数的request就是上面的yield Request.通过meta传递自定义参数
+                path = item['date'] + "/" + item['index'] + "/" + img.split('/')[-1]
+            else:
+                path = img.split('/')[-1]
+
+            if path and os.path.exists(settings.IMAGES_STORE + "/" + path):
+                print(settings.IMAGES_STORE + "/" + path + " extits")
+            else:
+                print(settings.IMAGES_STORE + "/" + path + " not extits")
+                yield Request(img, meta={'item': item, 'proxy': 'http://127.0.0.1:1087'}, dont_filter=True)
 
     def file_path(self, request, response=None, info=None):
         item = request.meta['item']
-        if item:
+        if item and item['date'] and item['index']:
             # 这个参数的request就是上面的yield Request.通过meta传递自定义参数
             return item['date'] + "/" + item['index'] + "/" + request.url.split('/')[-1]
         else:
@@ -40,6 +66,8 @@ class YikumanImagePipeline(ImagesPipeline):
             image.save(buf, 'JPEG')
         elif ext == 'gif' or ext == 'GIF':
             image.save(buf, 'GIF')
+        elif ext == 'png' or ext == 'PNG':
+            image.save(buf, 'PNG')
         else:
             image.save(buf, 'JPEG')
         yield path, image, buf
@@ -83,7 +111,6 @@ class YikumanMongoListPipeline(object):
         self.mongo_client.close()
 
     def process_item(self, item, spider):
-        print("YikumanMongoListPipeline")
-        m = self.collection.update({'url': item['url']}, dict(item), upsert=True)
-        print(m)
+        # m = self.collection.update({'url': item['url']}, dict(item), upsert=True)
+        # print(m)
         return item

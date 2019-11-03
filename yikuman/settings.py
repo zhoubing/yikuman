@@ -100,3 +100,11 @@ LOG_LEVEL = 'WARNING'
 
 time = datetime.datetime.now()
 LOG_FILE = "log/{}_{}_{}.log".format(time.year, time.month, time.day)
+
+
+# HTTPERROR_ALLOWED_CODES = [301]
+MEDIA_ALLOW_REDIRECTS = True  #允许301的时候重试
+# REDIRECT_ENABLED = False
+
+DEFAULT_REQUEST_HEADERS = {
+    "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",}

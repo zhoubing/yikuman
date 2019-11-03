@@ -1,3 +1,5 @@
+import os
+
 import scrapy
 from scrapy import Request
 
@@ -10,11 +12,11 @@ class YikumanList(scrapy.Spider):
     # start_urls = ['https://yikuman.com/category/page/1']
 
     def start_requests(self):
-        for index in range(1, 97):
-            yield Request('https://yikuman.com/category/guochan/page/' + str(index), callback=self.parse)
+        for index in range(1, 98):
+            yield Request('https://yikuman.com/category/guochan/page/' + str(index), callback=self.parse,
+                          dont_filter=True)
 
     def parse(self, response):
-        print("parse")
         posts = response.xpath("//li[@class='post box row ']")
         for index, post in enumerate(posts):
             img = post.xpath("div[@class='thumbnail']/a/img/@src")
@@ -39,7 +41,7 @@ class YikumanList(scrapy.Spider):
             item['cover'] = img.extract_first()
             item['url'] = href.extract_first()
             item['index'] = item['url'].split("/")[-1].split(".")[0]
-            yield scrapy.Request(item['url'], callback=self.parse_detail, meta={"item": item})
+            yield scrapy.Request(item['url'], callback=self.parse_detail, meta={"item": item}, dont_filter=True)
             # yield item
 
     def parse_detail(self, response):
@@ -51,12 +53,6 @@ class YikumanList(scrapy.Spider):
         detail_size = self.get_text(details, "大小")
         detail_time = self.get_text(details, "时间")
         detail_prescription = self.get_text(details, "说明")
-
-        print(detail_name)
-        print(detail_format)
-        print(detail_size)
-        print(detail_time)
-        print(detail_prescription)
 
         detail_img = response.xpath("//div[@id='post_content']/p//img/@src")
         imgs = []
@@ -71,7 +67,7 @@ class YikumanList(scrapy.Spider):
             "prescription": detail_prescription,
             "imgs": imgs
         }
-        print(item)
+        # print(item)
         yield item
 
     @staticmethod
