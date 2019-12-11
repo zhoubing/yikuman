@@ -28,9 +28,10 @@ class YikumanImagePipeline(ImagesPipeline):
             path = cover.split('/')[-1]
 
         if path and os.path.exists(settings.IMAGES_STORE + "/" + path):
-            print(settings.IMAGES_STORE + "/" + path + " extits")
+            # print(item['url'] + ": " + settings.IMAGES_STORE + "/" + path + " exists")
+            pass
         else:
-            print(settings.IMAGES_STORE + "/" + path + " not extits")
+            # print(item['url'] + ": " + settings.IMAGES_STORE + "/" + path + " not exists")
             # 挂本地代理
             yield Request(cover, meta={'item': item, 'proxy': 'http://127.0.0.1:1087'}, dont_filter=True)
 
@@ -44,9 +45,10 @@ class YikumanImagePipeline(ImagesPipeline):
                 path = img.split('/')[-1]
 
             if path and os.path.exists(settings.IMAGES_STORE + "/" + path):
-                print(settings.IMAGES_STORE + "/" + path + " extits")
+                # print(item['url'] + ": " + settings.IMAGES_STORE + "/" + path + " exists")
+                pass
             else:
-                print(settings.IMAGES_STORE + "/" + path + " not extits")
+                # print(item['url'] + ": " + settings.IMAGES_STORE + "/" + path + " not exists")
                 yield Request(img, meta={'item': item, 'proxy': 'http://127.0.0.1:1087'}, dont_filter=True)
 
     def file_path(self, request, response=None, info=None):
@@ -93,24 +95,25 @@ class YikumanImagePipeline(ImagesPipeline):
             if self.check_gif(image):
                 self.persist_gif(path, response.body, info)
             else:
-                self.store.persist_file(path, buf, info, meta={'width': width, 'height':height},
+                self.store.persist_file(path, buf, info, meta={'width': width, 'height': height},
                                         headers={'Content-Type': 'image/jpeg'})
         return checksum
 
     def item_completed(self, results, item, info):
+        print(item['url'] + str(results))
         return item
 
 
 class YikumanMongoListPipeline(object):
 
     def open_spider(self, spider):
-        self.mongo_client = pymongo.MongoClient(host='192.168.0.109', port=27017)
+        self.mongo_client = pymongo.MongoClient(host='192.168.0.111', port=27017)
         self.collection = self.mongo_client.yikuman.article
 
     def close_spider(self, spider):
         self.mongo_client.close()
 
     def process_item(self, item, spider):
-        # m = self.collection.update({'url': item['url']}, dict(item), upsert=True)
-        # print(m)
+        m = self.collection.update_one({'url': item['url']}, {'$set': dict(item)}, upsert=True)
+        print(m)
         return item

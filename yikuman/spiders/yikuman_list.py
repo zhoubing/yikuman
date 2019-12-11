@@ -1,5 +1,3 @@
-import os
-
 import scrapy
 from scrapy import Request
 
@@ -12,7 +10,7 @@ class YikumanList(scrapy.Spider):
     # start_urls = ['https://yikuman.com/category/page/1']
 
     def start_requests(self):
-        for index in range(1, 98):
+        for index in range(1, 4):
             yield Request('https://yikuman.com/category/guochan/page/' + str(index), callback=self.parse,
                           dont_filter=True)
 
@@ -42,11 +40,9 @@ class YikumanList(scrapy.Spider):
             item['url'] = href.extract_first()
             item['index'] = item['url'].split("/")[-1].split(".")[0]
             yield scrapy.Request(item['url'], callback=self.parse_detail, meta={"item": item}, dont_filter=True)
-            # yield item
 
     def parse_detail(self, response):
         item = response.meta['item']
-        # print(response.xpath("//div[@id='post_content']/p/br")[0].xpath("following::text()")[0])
         details = response.xpath("//div[@id='post_content']/p//text()")
         detail_name = self.get_text(details, "名称")
         detail_format = self.get_text(details, "格式")
@@ -67,7 +63,7 @@ class YikumanList(scrapy.Spider):
             "prescription": detail_prescription,
             "imgs": imgs
         }
-        # print(item)
+        print(item)
         yield item
 
     @staticmethod
